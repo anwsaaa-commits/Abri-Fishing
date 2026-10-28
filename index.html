@@ -38,7 +38,6 @@
             padding-bottom: 30px;
         }
 
-        /* الهيدر الرئيسي */
         header {
             background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
             padding: 20px 15px;
@@ -66,7 +65,6 @@
             padding: 15px;
         }
 
-        /* أزرار العودة والتنقل */
         .btn-back {
             background: #334155;
             color: white;
@@ -85,7 +83,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        /* نظام الصفحات */
         .page {
             display: none;
             animation: fadeIn 0.25s ease-in-out;
@@ -100,7 +97,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* بطاقة اختيار العبري */
         .boat-selector-card {
             background: var(--card-dark);
             border-radius: var(--radius-lg);
@@ -164,7 +160,6 @@
             box-shadow: 0 0 12px rgba(2, 132, 199, 0.5);
         }
 
-        /* قائمة الأزرار الرئيسية الضخمة */
         .main-menu-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -224,10 +219,655 @@
             color: var(--text-sub);
         }
 
-        /* نماذج الإدخال المريحة */
         .form-card {
             background: var(--card-dark);
             border-radius: var(--radius-lg);
             padding: 20px;
             border: 1px solid var(--border-color);
-            
+            margin-bottom: 20px;
+        }
+
+        .form-card h2 {
+            font-size: 1.2rem;
+            color: #38bdf8;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px;
+            background: #0f172a;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 1.05rem;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+            margin-top: 10px;
+        }
+
+        .btn-submit:active {
+            background: var(--primary-hover);
+        }
+
+        .data-table-card {
+            background: var(--card-dark);
+            border-radius: var(--radius-lg);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 14px 10px;
+            text-align: right;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-sub);
+            font-weight: bold;
+            background: #0f172a;
+        }
+
+        .total-box {
+            background: #0f172a;
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>نظام إدارة العبري والمراكب</h1>
+        <p>إشراف: أبو شاهين | حاسبة السراكل والمبيعات</p>
+    </header>
+
+    <div class="container">
+
+        <div id="page-home" class="page active">
+            <div class="boat-selector-card">
+                <div class="boat-title-box">
+                    <label>🚤 اسم العبري الحالي (اضغط لتعديل الاسم):</label>
+                    <input type="text" id="currentBoatNameInput" class="boat-title-input" onchange="updateBoatName(this.value)">
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                    <span style="font-size: 0.85rem; color: var(--text-sub); font-weight: bold;">قائمة المراكب:</span>
+                    <button onclick="addNewBoat()" style="background: var(--success); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer;">+ إضافة عبري</button>
+                </div>
+
+                <div class="boats-grid" id="boatsGridContainer"></div>
+            </div>
+
+            <div class="main-menu-grid">
+                <div class="menu-btn" onclick="openPage('page-food')">
+                    <div class="menu-btn-content">
+                        <div class="menu-btn-icon">🛒</div>
+                        <div class="menu-btn-text">
+                            <h3>التموين الغذائي</h3>
+                            <p>إدخال تكلفة المواد الغذائية ومونة الرحلة</p>
+                        </div>
+                    </div>
+                    <div class="menu-btn-arrow">←</div>
+                </div>
+
+                <div class="menu-btn" onclick="openPage('page-fuel')">
+                    <div class="menu-btn-content">
+                        <div class="menu-btn-icon">⛽</div>
+                        <div class="menu-btn-text">
+                            <h3>المحروقات والثلج</h3>
+                            <p>بترول، ديزل، زيت محرك، وقوالب الثلج</p>
+                        </div>
+                    </div>
+                    <div class="menu-btn-arrow">←</div>
+                </div>
+
+                <div class="menu-btn" onclick="openPage('page-gear')">
+                    <div class="menu-btn-content">
+                        <div class="menu-btn-icon">🎣</div>
+                        <div class="menu-btn-text">
+                            <h3>الشباك ومواد الصيد</h3>
+                            <p>مونة العبري ومعدات الاصطياد وقطع الغيار</p>
+                        </div>
+                    </div>
+                    <div class="menu-btn-arrow">←</div>
+                </div>
+
+                <div class="menu-btn" onclick="openPage('page-fishermen')">
+                    <div class="menu-btn-content">
+                        <div class="menu-btn-icon">👨‍✈️</div>
+                        <div class="menu-btn-text">
+                            <h3>إدارة الصيادين والديون</h3>
+                            <p>أسماء البحارة، السلفيات والمديونيات</p>
+                        </div>
+                    </div>
+                    <div class="menu-btn-arrow">←</div>
+                </div>
+
+                <div class="menu-btn" onclick="openPage('page-sales')">
+                    <div class="menu-btn-content">
+                        <div class="menu-btn-icon">🐟</div>
+                        <div class="menu-btn-text">
+                            <h3>مبيعات الأسماك</h3>
+                            <p>تسجيل المبيعات، الكميات والأرباح</p>
+                        </div>
+                    </div>
+                    <div class="menu-btn-arrow">←</div>
+                </div>
+
+                <div class="menu-btn" style="border-color: var(--accent);" onclick="openPage('page-report')">
+                    <div class="menu-btn-content">
+                        <div class="menu-btn-icon" style="color: var(--accent); background: rgba(245, 158, 11, 0.2);">📊</div>
+                        <div class="menu-btn-text">
+                            <h3 style="color: var(--accent);">التقرير الشامل و PDF</h3>
+                            <p>صافي الأرباح، التصدير والحفظ الاحتياطي</p>
+                        </div>
+                    </div>
+                    <div class="menu-btn-arrow">←</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-food" class="page">
+            <button class="btn-back" onclick="openPage('page-home')">→ العودة للرئيسية</button>
+            <div class="form-card">
+                <h2>🛒 إضافة تموين غذائي</h2>
+                <div class="form-group">
+                    <label>بيان المادة الغذائية</label>
+                    <input type="text" id="foodItem" class="form-control" placeholder="مثال: أرز، سكر، دقيق، زيوت...">
+                </div>
+                <div class="form-group">
+                    <label>التكلفة (ريال)</label>
+                    <input type="number" id="foodCost" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>ملاحظات</label>
+                    <input type="text" id="foodNotes" class="form-control" placeholder="تفاصيل إضافية...">
+                </div>
+                <button class="btn-submit" onclick="addFoodExpense()">حفظ التموين</button>
+            </div>
+            <div class="data-table-card">
+                <table>
+                    <thead>
+                        <tr><th>البيان</th><th>المبلغ</th><th>إجراء</th></tr>
+                    </thead>
+                    <tbody id="foodTableBody"></tbody>
+                </table>
+                <div class="total-box">
+                    <span>الإجمالي:</span>
+                    <span id="foodTotal">0 ريال</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-fuel" class="page">
+            <button class="btn-back" onclick="openPage('page-home')">→ العودة للرئيسية</button>
+            <div class="form-card">
+                <h2>⛽ إضافة محروقات وثلج</h2>
+                <div class="form-group">
+                    <label>نوع البند</label>
+                    <select id="fuelType" class="form-control">
+                        <option value="بترول">بترول</option>
+                        <option value="ديزل">ديزل</option>
+                        <option value="زيت محرك">زيت محرك</option>
+                        <option value="ثلج">ثلج</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الكمية (لتر / قالب)</label>
+                    <input type="number" id="fuelQty" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>التكلفة الإجمالية (ريال)</label>
+                    <input type="number" id="fuelCost" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>ملاحظات</label>
+                    <input type="text" id="fuelNotes" class="form-control" placeholder="اسم المحطة...">
+                </div>
+                <button class="btn-submit" onclick="addFuelExpense()">حفظ المحروقات</button>
+            </div>
+            <div class="data-table-card">
+                <table>
+                    <thead>
+                        <tr><th>البند</th><th>التكلفة</th><th>إجراء</th></tr>
+                    </thead>
+                    <tbody id="fuelTableBody"></tbody>
+                </table>
+                <div class="total-box">
+                    <span>الإجمالي:</span>
+                    <span id="fuelTotal">0 ريال</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-gear" class="page">
+            <button class="btn-back" onclick="openPage('page-home')">→ العودة للرئيسية</button>
+            <div class="form-card">
+                <h2>🎣 إضافة شباك ومعدات صيد</h2>
+                <div class="form-group">
+                    <label>اسم العدة أو القطعة</label>
+                    <input type="text" id="gearItem" class="form-control" placeholder="مثال: شباك، سنانير، خيوط...">
+                </div>
+                <div class="form-group">
+                    <label>التكلفة (ريال)</label>
+                    <input type="number" id="gearCost" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>ملاحظات</label>
+                    <input type="text" id="gearNotes" class="form-control" placeholder="تفاصيل الصيانة...">
+                </div>
+                <button class="btn-submit" onclick="addGearExpense()">حفظ المعدات</button>
+            </div>
+            <div class="data-table-card">
+                <table>
+                    <thead>
+                        <tr><th>البيان</th><th>التكلفة</th><th>إجراء</th></tr>
+                    </thead>
+                    <tbody id="gearTableBody"></tbody>
+                </table>
+                <div class="total-box">
+                    <span>الإجمالي:</span>
+                    <span id="gearTotal">0 ريال</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-fishermen" class="page">
+            <button class="btn-back" onclick="openPage('page-home')">→ العودة للرئيسية</button>
+            <div class="form-card">
+                <h2>👨‍✈️ تسجيل صياد جديد</h2>
+                <div class="form-group">
+                    <label>اسم الصياد / البحار</label>
+                    <input type="text" id="fisherName" class="form-control" placeholder="الاسم الكامل">
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="text" id="fisherPhone" class="form-control" placeholder="رقم التواصل">
+                </div>
+                <div class="form-group">
+                    <label>السلفة / المديونية الحالية (ريال)</label>
+                    <input type="number" id="fisherDebt" class="form-control" value="0">
+                </div>
+                <button class="btn-submit" onclick="addFisherman()">تسجيل الصياد</button>
+            </div>
+            <div class="data-table-card">
+                <table>
+                    <thead>
+                        <tr><th>الاسم</th><th>الديون</th><th>إجراء</th></tr>
+                    </thead>
+                    <tbody id="fishermenTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="page-sales" class="page">
+            <button class="btn-back" onclick="openPage('page-home')">→ العودة للرئيسية</button>
+            <div class="form-card">
+                <h2>🐟 تسجيل مبيعات الأسماك</h2>
+                <div class="form-group">
+                    <label>صنف السمك</label>
+                    <input type="text" id="fishType" class="form-control" placeholder="مثال: ثمد، ديرك، شعور...">
+                </div>
+                <div class="form-group">
+                    <label>الكمية (كيلو / ثلاجة)</label>
+                    <input type="number" id="fishQty" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>إجمالي سعر البيع (ريال)</label>
+                    <input type="number" id="fishPrice" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>اسم المشتري / ملاحظات</label>
+                    <input type="text" id="fishNotes" class="form-control" placeholder="السوق أو الحوت...">
+                </div>
+                <button class="btn-submit" style="background: var(--success);" onclick="addFishSale()">تسجيل البيع</button>
+            </div>
+            <div class="data-table-card">
+                <table>
+                    <thead>
+                        <tr><th>الصنف</th><th>المبلغ</th><th>إجراء</th></tr>
+                    </thead>
+                    <tbody id="salesTableBody"></tbody>
+                </table>
+                <div class="total-box">
+                    <span>إجمالي المبيعات:</span>
+                    <span id="salesTotal" style="color: var(--success);">0 ريال</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-report" class="page">
+            <button class="btn-back" onclick="openPage('page-home')">→ العودة للرئيسية</button>
+            <div class="form-card" id="pdfReportArea">
+                <h2>📊 الحساب المالي الشامل</h2>
+                <p style="color: var(--text-sub); margin-bottom: 15px; font-size: 0.9rem;">العبري الحالي: <strong id="reportBoatName" style="color: white;">---</strong></p>
+
+                <table>
+                    <tr><td>إجمالي المبيعات:</td><td id="repSales" style="color: var(--success); font-weight: bold;">0 ريال</td></tr>
+                    <tr><td>التموين الغذائي:</td><td id="repFood" style="color: var(--danger);">0 ريال</td></tr>
+                    <tr><td>المحروقات والثلج:</td><td id="repFuel" style="color: var(--danger);">0 ريال</td></tr>
+                    <tr><td>المعدات والشباك:</td><td id="repGear" style="color: var(--danger);">0 ريال</td></tr>
+                </table>
+
+                <div class="total-box" style="margin-top: 20px;">
+                    <span>صافي الأرباح:</span>
+                    <span id="repNet">0 ريال</span>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h2>💾 مشاركة وتأمين البيانات</h2>
+                <button class="btn-submit" style="background: var(--accent); margin-bottom: 12px;" onclick="exportToPDF()">📄 تصدير كشف PDF</button>
+                <button class="btn-submit" style="background: var(--success); margin-bottom: 12px;" onclick="backupData()">💾 حفظ نسخة احتياطية</button>
+                <label class="btn-submit" style="background: #475569; display: block; text-align: center; cursor: pointer;">
+                    📂 استعادة بيانات سابقة
+                    <input type="file" id="restoreFile" style="display: none;" onchange="restoreData(event)">
+                </label>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let appData = JSON.parse(localStorage.getItem('abri_fleet_data')) || {
+            currentBoatId: 1,
+            boats: [
+                { id: 1, name: 'عبري الشاهين 1', food: [], fuel: [], gear: [], fishermen: [], sales: [] }
+            ]
+        };
+
+        function saveData() {
+            localStorage.setItem('abri_fleet_data', JSON.stringify(appData));
+        }
+
+        function getCurrentBoat() {
+            return appData.boats.find(b => b.id === appData.currentBoatId) || appData.boats[0];
+        }
+
+        function openPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+            renderAll();
+        }
+
+        function renderBoats() {
+            const grid = document.getElementById('boatsGridContainer');
+            grid.innerHTML = '';
+            appData.boats.forEach(boat => {
+                const btn = document.createElement('div');
+                btn.className = `boat-btn ${boat.id === appData.currentBoatId ? 'active' : ''}`;
+                btn.innerText = boat.name;
+                btn.onclick = () => {
+                    appData.currentBoatId = boat.id;
+                    saveData();
+                    renderAll();
+                };
+                grid.appendChild(btn);
+            });
+
+            const current = getCurrentBoat();
+            document.getElementById('currentBoatNameInput').value = current.name;
+            document.getElementById('reportBoatName').innerText = current.name;
+        }
+
+        function addNewBoat() {
+            const name = prompt("أدخل اسم العبري الجديد:");
+            if(!name) return;
+            const newId = Date.now();
+            appData.boats.push({
+                id: newId,
+                name: name,
+                food: [], fuel: [], gear: [], fishermen: [], sales: []
+            });
+            appData.currentBoatId = newId;
+            saveData();
+            renderAll();
+        }
+
+        function updateBoatName(newName) {
+            if(!newName) return;
+            getCurrentBoat().name = newName;
+            saveData();
+            renderBoats();
+        }
+
+        function addFoodExpense() {
+            const item = document.getElementById('foodItem').value;
+            const cost = parseFloat(document.getElementById('foodCost').value) || 0;
+            const notes = document.getElementById('foodNotes').value;
+            if(!item || cost <= 0) return alert('أدخل البيان والتكلفة الصحيحة');
+
+            getCurrentBoat().food.push({ id: Date.now(), item, cost, notes });
+            saveData();
+            document.getElementById('foodItem').value = '';
+            document.getElementById('foodCost').value = '';
+            document.getElementById('foodNotes').value = '';
+            renderFood();
+            alert('تم الحفظ بنجاح');
+        }
+
+        function deleteFood(id) {
+            let boat = getCurrentBoat();
+            boat.food = boat.food.filter(x => x.id !== id);
+            saveData();
+            renderFood();
+        }
+
+        function renderFood() {
+            const boat = getCurrentBoat();
+            const tbody = document.getElementById('foodTableBody');
+            tbody.innerHTML = '';
+            let total = 0;
+            boat.food.forEach(f => {
+                total += f.cost;
+                tbody.innerHTML += `<tr><td>${f.item}</td><td>${f.cost} ريال</td><td><button class="btn-delete" onclick="deleteFood(${f.id})">حذف</button></td></tr>`;
+            });
+            document.getElementById('foodTotal').innerText = total + ' ريال';
+        }
+
+        function addFuelExpense() {
+            const type = document.getElementById('fuelType').value;
+            const qty = parseFloat(document.getElementById('fuelQty').value) || 0;
+            const cost = parseFloat(document.getElementById('fuelCost').value) || 0;
+            const notes = document.getElementById('fuelNotes').value;
+            if(cost <= 0) return alert('أدخل التكلفة بشكل صحيح');
+
+            getCurrentBoat().fuel.push({ id: Date.now(), type, qty, cost, notes });
+            saveData();
+            document.getElementById('fuelQty').value = '';
+            document.getElementById('fuelCost').value = '';
+            document.getElementById('fuelNotes').value = '';
+            renderFuel();
+            alert('تم الحفظ بنجاح');
+        }
+
+        function deleteFuel(id) {
+            let boat = getCurrentBoat();
+            boat.fuel = boat.fuel.filter(x => x.id !== id);
+            saveData();
+            renderFuel();
+        }
+
+        function renderFuel() {
+            const boat = getCurrentBoat();
+            const tbody = document.getElementById('fuelTableBody');
+            tbody.innerHTML = '';
+            let total = 0;
+            boat.fuel.forEach(f => {
+                total += f.cost;
+                tbody.innerHTML += `<tr><td>${f.type} (${f.qty})</td><td>${f.cost} ريال</td><td><button class="btn-delete" onclick="deleteFuel(${f.id})">حذف</button></td></tr>`;
+            });
+            document.getElementById('fuelTotal').innerText = total + ' ريال';
+        }
+
+        function addGearExpense() {
+            const item = document.getElementById('gearItem').value;
+            const cost = parseFloat(document.getElementById('gearCost').value) || 0;
+            const notes = document.getElementById('gearNotes').value;
+            if(!item || cost <= 0) return alert('أدخل البيان والتكلفة');
+
+            getCurrentBoat().gear.push({ id: Date.now(), item, cost, notes });
+            saveData();
+            document.getElementById('gearItem').value = '';
+            document.getElementById('gearCost').value = '';
+            document.getElementById('gearNotes').value = '';
+            renderGear();
+            alert('تم الحفظ بنجاح');
+        }
+
+        function deleteGear(id) {
+            let boat = getCurrentBoat();
+            boat.gear = boat.gear.filter(x => x.id !== id);
+            saveData();
+            renderGear();
+        }
+
+        function renderGear() {
+            const boat = getCurrentBoat();
+            const tbody = document.getElementById('gearTableBody');
+            tbody.innerHTML = '';
+            let total = 0;
+            boat.gear.forEach(g => {
+                total += g.cost;
+                tbody.innerHTML += `<tr><td>${g.item}</td><td>${g.cost} ريال</td><td><button class="btn-delete" onclick="deleteGear(${g.id})">حذف</button></td></tr>`;
+            });
+            document.getElementById('gearTotal').innerText = total + ' ريال';
+        }
+
+        function addFisherman() {
+            const name = document.getElementById('fisherName').value;
+            const phone = document.getElementById('fisherPhone').value;
+            const debt = parseFloat(document.getElementById('fisherDebt').value) || 0;
+            if(!name) return alert('أدخل اسم الصياد');
+
+            getCurrentBoat().fishermen.push({ id: Date.now(), name, phone, debt });
+            saveData();
+            document.getElementById('fisherName').value = '';
+            document.getElementById('fisherPhone').value = '';
+            document.getElementById('fisherDebt').value = '0';
+            renderFishermen();
+            alert('تم التسجيل بنجاح');
+        }
+
+        function deleteFisherman(id) {
+            let boat = getCurrentBoat();
+            boat.fishermen = boat.fishermen.filter(x => x.id !== id);
+            saveData();
+            renderFishermen();
+        }
+
+        function renderFishermen() {
+            const boat = getCurrentBoat();
+            const tbody = document.getElementById('fishermenTableBody');
+            tbody.innerHTML = '';
+            boat.fishermen.forEach(f => {
+                tbody.innerHTML += `<tr><td>${f.name}</td><td>${f.debt} ريال</td><td><button class="btn-delete" onclick="deleteFisherman(${f.id})">حذف</button></td></tr>`;
+            });
+        }
+
+        function addFishSale() {
+            const type = document.getElementById('fishType').value;
+            const qty = parseFloat(document.getElementById('fishQty').value) || 0;
+            const price = parseFloat(document.getElementById('fishPrice').value) || 0;
+            const notes = document.getElementById('fishNotes').value;
+            if(!type || price <= 0) return alert('أدخل الصنف والسعر');
+
+            getCurrentBoat().sales.push({ id: Date.now(), type, qty, price, notes });
+            saveData();
+            document.getElementById('fishType').value = '';
+            document.getElementById('fishQty').value = '';
+            document.getElementById('fishPrice').value = '';
+            document.getElementById('fishNotes').value = '';
+            renderSales();
+            alert('تم تسجيل البيع بنجاح');
+        }
+
+        function deleteSale(id) {
+            let boat = getCurrentBoat();
+            boat.sales = boat.sales.filter(x => x.id !== id);
+            saveData();
+            renderSales();
+        }
+
+        function renderSales() {
+            const boat = getCurrentBoat();
+            const tbody = document.getElementById('salesTableBody');
+            tbody.innerHTML = '';
+            let total = 0;
+            boat.sales.forEach(s => {
+                total += s.price;
+                tbody.innerHTML += `<tr><td>${s.type}</td><td>${s.price} ريال</td><td><button class="btn-delete" onclick="deleteSale(${s.id})">حذف</button></td></tr>`;
+            });
+            document.getElementById('salesTotal').innerText = total + ' ريال';
+        }
+
+        function renderReport() {
+            const boat = getCurrentBoat();
+            const totalSales = boat.sales.reduce((sum, i) => sum + i.price, 0);
+            const totalFood = boat.food.reduce((sum, i) => sum + i.cost, 0);
+            const totalFuel = boat.fuel.reduce((sum, i) => sum + i.cost, 0);
+            const totalGear = boat.gear.reduce((sum, i) => sum + i.cost, 0);
+            const netProfit = totalSales - (totalFood + totalFuel + totalGear);
+
+            document.getElementById('repSales').innerText = totalSales + ' ريال';
+            document.getElementById('repFood').innerText = totalFood + ' ريال';
+            document.getElementById('repFuel').innerText = totalFuel + ' ريال';
+            document.getElementById('repGear').innerText = totalGear +
