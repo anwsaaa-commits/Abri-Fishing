@@ -3,284 +3,806 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق حسابات مركب الصيد - العبري</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>إدارة مراكب العبري - أبو شاهين</title>
+    <!-- مكتبة لطباعة وتصدير ملفات PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
-            --primary: #0a192f;
-            --secondary: #172a45;
-            --accent: #d4af37;
-            --text-light: #e6f1ff;
-            --text-main: #333333;
-            --bg-body: #f4f7f6;
-            --success: #28a745;
-            --danger: #dc3545;
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --secondary: #0f172a;
+            --accent: #f59e0b;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --radius: 12px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 70px; }
-        header { background-color: var(--primary); color: var(--accent); padding: 15px; text-align: center; border-bottom: 3px solid var(--accent); }
-        header h1 { font-size: 1.3rem; margin-bottom: 5px; }
-        header p { font-size: 0.85rem; color: var(--text-light); }
-        
-        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
-        
-        /* Dashboard Cards */
-        .grid-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--primary); cursor: pointer; transition: 0.2s; }
-        .card:hover { transform: translateY(-3px); }
-        .card i { font-size: 1.8rem; color: var(--accent); margin-bottom: 8px; }
-        .card h3 { font-size: 0.95rem; color: var(--primary); }
-        .card span { font-size: 0.8rem; color: #777; }
 
-        /* Sections */
-        .section { display: none; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        .section.active { display: block; }
-        .section-title { font-size: 1.1rem; color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid var(--accent); padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 40px; }
 
-        /* Forms & Inputs */
+        header {
+            background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        header h1 { font-size: 1.5rem; margin-bottom: 5px; }
+        header p { font-size: 0.9rem; opacity: 0.8; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 15px; }
+
+        /* واجهة اختيار وإدارة المراكب */
+        .boats-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .boat-banner {
+            position: relative;
+            height: 180px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 15px;
+            background: #cbd5e1;
+        }
+        .boat-banner img { width: 100%; height: 100%; object-fit: cover; }
+        .boat-banner-overlay {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .boat-title-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed white;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            width: 70%;
+            outline: none;
+        }
+
+        .boats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .boat-card {
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .boat-card.active { border-color: var(--primary); background: #e0f2fe; font-weight: bold; }
+        .boat-card:hover { background: #e2e8f0; }
+
+        /* الأزرار والقوائم */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn:hover { background: var(--primary-dark); }
+        .btn-danger { background: var(--danger); }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-success { background: var(--success); }
+        .btn-success:hover { background: #16a34a; }
+        .btn-accent { background: var(--accent); color: #0f172a; }
+        .btn-accent:hover { background: #d97706; color: white; }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .nav-tab {
+            background: var(--card-bg);
+            border: 1px solid #cbd5e1;
+            padding: 10px 16px;
+            border-radius: 20px;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+        .nav-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .card h3 { margin-bottom: 15px; color: var(--secondary); border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; font-size: 1.1rem; }
+
         .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; font-weight: 600; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; }
-        
-        .btn { background: var(--primary); color: var(--accent); border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; font-size: 0.95rem; transition: 0.2s; }
-        .btn:hover { background: var(--secondary); }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-success { background: var(--success); color: white; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: 600; color: var(--text-light); }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1); }
 
-        /* Tables & Lists */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
-        th, td { padding: 8px; text-align: right; border-bottom: 1px solid #eee; }
-        th { background-color: var(--primary); color: white; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        /* Bottom Nav */
-        nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--primary); display: flex; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--accent); z-index: 1000; }
-        nav button { background: none; border: none; color: white; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 25%; }
-        nav button i { font-size: 1.2rem; margin-bottom: 3px; color: var(--accent); }
-        nav button.active { color: var(--accent); font-weight: bold; }
-        
-        .badge { background: var(--accent); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+        th, td { padding: 10px; text-align: right; border-bottom: 1px solid #f1f5f9; }
+        th { background: #f8fafc; color: var(--text-light); font-weight: 600; }
+
+        .total-box {
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>حسابات مركب الصيد (العبري)</h1>
-        <p>إدارة السراكل، الصيادين، والمبيعات والأرباح</p>
+        <h1>نظام إدارة مراكب الصيد (العبري)</h1>
+        <p>إشراف: أبو شاهين | احترافية ودقة في إدارة السراكل والحسابات</p>
     </header>
 
     <div class="container">
-        
-        <!-- القائمة الرئيسية -->
-        <div id="home-section" class="section active">
-            <div class="section-title">لوحة المؤشرات السريعة</div>
-            <div class="grid-cards">
-                <div class="card" onclick="switchSection('sarakeel')">
-                    <i class="fas fa-boxes"></i>
-                    <h3>سراكل العبري</h3>
-                    <span>المخزون والوقود</span>
-                </div>
-                <div class="card" onclick="switchSection('fishermen')">
-                    <i class="fas fa-users"></i>
-                    <h3>الصيادين والقروض</h3>
-                    <span>الأسماء والجوالات والديون</span>
-                </div>
-                <div class="card" onclick="switchSection('sales')">
-                    <i class="fas fa-fish"></i>
-                    <h3>مبيعات الأسماك</h3>
-                    <span>البيع والأرباح الصافية</span>
-                </div>
-                <div class="card" onclick="switchSection('settings')">
-                    <i class="fas fa-cogs"></i>
-                    <h3>إضافة وتعديل</h3>
-                    <span>التحكم الكامل بالبيانات</span>
+
+        <!-- شريط اختيار وإدارة المراكب -->
+        <div class="boats-section">
+            <div class="boat-banner">
+                <img id="currentBoatImage" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" alt="صورة العبري">
+                <div class="boat-banner-overlay">
+                    <div style="width: 100%;">
+                        <label style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 2px;">اسم العبري الحالي (اضغط لتعديله):</label>
+                        <input type="text" id="currentBoatNameInput" class="boat-title-input" onchange="updateBoatName(this.value)">
+                    </div>
                 </div>
             </div>
-            
-            <div style="background: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
-                <h4 style="color: var(--primary); margin-bottom: 10px; font-size: 0.95rem;"><i class="fas fa-chart-line"></i> ملخص عام للمشروع</h4>
-                <p style="font-size: 0.85rem; margin-bottom: 5px;">إجمالي المبيعات: <span id="summary-sales" class="badge">0 ريال</span></p>
-                <p style="font-size: 0.85rem; margin-bottom: 5px;">إجمالي المديونيات على الصيادين: <span id="summary-debts" class="badge" style="background: var(--danger); color: white;">0 ريال</span></p>
-                <p style="font-size: 0.85rem;">صافي الأرباح: <span id="summary-profits" class="badge" style="background: var(--success); color: white;">0 ريال</span></p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-weight: bold; font-size: 0.9rem;">قائمة المراكب (السراكل):</span>
+                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.85rem;" onclick="addNewBoat()">+ إضافة عبري جديد</button>
+            </div>
+            <div class="boats-grid" id="boatsGridContainer">
+                <!-- يتم تعبئتها ديناميكياً -->
             </div>
         </div>
 
-        <!-- 1. قسم سراكل العبري -->
-        <div id="sarakeel-section" class="section">
-            <div class="section-title">سراكل العبري (المخزون والمستلزمات)</div>
-            <div id="sarakeel-list"></div>
+        <!-- التنقل بين الأقسام -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="switchTab('foodTab')">🛒 التموين الغذائي</div>
+            <div class="nav-tab" onclick="switchTab('fuelTab')">⛽ المحروقات والثلج</div>
+            <div class="nav-tab" onclick="switchTab('gearTab')">🎣 الشباك والمعدات</div>
+            <div class="nav-tab" onclick="switchTab('fishermenTab')">👨‍✈️ الصيادون والحسابات</div>
+            <div class="nav-tab" onclick="switchTab('salesTab')">🐟 مبيعات الأسماك</div>
+            <div class="nav-tab" onclick="switchTab('reportTab')">📊 التقرير الشامل و PDF</div>
         </div>
 
-        <!-- 2. قسم الصيادين -->
-        <div id="fishermen-section" class="section">
-            <div class="section-title">كشوفات الصيادين والسحبيات والديون</div>
-            <div class="form-group">
-                <input type="text" id="search-fisherman" placeholder="ابحث باسم الصياد..." onkeyup="filterFishermen()">
-            </div>
-            <div id="fishermen-list"></div>
-        </div>
-
-        <!-- 3. قسم المبيعات والأرباح -->
-        <div id="sales-section" class="section">
-            <div class="section-title">إجمالي بيع السمك والأرباح</div>
-            <div id="sales-details"></div>
-        </div>
-
-        <!-- 4. قسم الإضافة والتحكم -->
-        <div id="settings-section" class="section">
-            <div class="section-title">إضافة بيانات جديدة (تحكم كامل)</div>
-            
-            <div style="margin-bottom: 20px;">
-                <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--primary);">إضافة صياد جديد</h4>
-                <div class="form-group"><input type="text" id="new-f-name" placeholder="اسم الصياد"></div>
-                <div class="form-group"><input type="text" id="new-f-phone" placeholder="رقم الجوال"></div>
-                <div class="form-group"><input type="number" id="new-f-debt" placeholder="المديونية الابتدائية (إن وجدت)"></div>
-                <button class="btn" onclick="addFisherman()">حفظ الصياد</button>
+        <!-- 1. قسم التموين الغذائي -->
+        <div id="foodTab" class="tab-content active">
+            <div class="card">
+                <h3>إدخال تكلفة المواد الغذائية (مونة الرحلة)</h3>
+                <div class="form-group">
+                    <label>نوع المادة الغذائية / البيان</label>
+                    <input type="text" id="foodItem" class="form-control" placeholder="مثال: أرز، سكر، دقيق، زيوت طهي...">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>التكلفة (ريال)</label>
+                        <input type="number" id="foodCost" class="form-control" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>ملاحظات</label>
+                        <input type="text" id="foodNotes" class="form-control" placeholder="التفاصيل...">
+                    </div>
+                </div>
+                <button class="btn" onclick="addFoodExpense()">إضافة المصروف</button>
             </div>
 
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            <div class="card">
+                <h3>سجل التموين الغذائي لهذا العبري</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>البيان</th>
+                            <th>المبلغ</th>
+                            <th>ملاحظات</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="foodTableBody"></tbody>
+                </table>
+                <div class="total-box">
+                    <span>إجمالي المواد الغذائية:</span>
+                    <span id="foodTotal">0 ريال</span>
+                </div>
+            </div>
+        </div>
 
-            <div>
-                <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--primary);">تسجيل عملية بيع سمك جديدة</h4>
-                <div class="form-group"><input type="number" id="new-sale-amount" placeholder="إجمالي قيمة بيع السمك"></div>
-                <div class="form-group"><input type="number" id="new-sale-expenses" placeholder="المصاريف (سراكل/وقود/نثرية)"></div>
-                <button class="btn btn-success" onclick="addSaleRecord()">حساب وحفظ الأرباح</button>
+        <!-- 2. قسم المحروقات والثلج -->
+        <div id="fuelTab" class="tab-content">
+            <div class="card">
+                <h3>تكلفة المحروقات والثلج (بترول، ديزل، زيت، ثلج)</h3>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>نوع البند</label>
+                        <select id="fuelType" class="form-control">
+                            <option value="بترول">بترول</option>
+                            <option value="ديزل">ديزل</option>
+                            <option value="زيت محرك">زيت محرك</option>
+                            <option value="ثلج">ثلج</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الكمية (لتر / قالب)</label>
+                        <input type="number" id="fuelQty" class="form-control" placeholder="0">
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>الإجمالي (ريال)</label>
+                        <input type="number" id="fuelCost" class="form-control" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>ملاحظات</label>
+                        <input type="text" id="fuelNotes" class="form-control" placeholder="المحطة أو المورد...">
+                    </div>
+                </div>
+                <button class="btn" onclick="addFuelExpense()">إضافة بند المحروقات</button>
+            </div>
+
+            <div class="card">
+                <h3>سجل المحروقات والثلج</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>البند</th>
+                            <th>الكمية</th>
+                            <th>التكلفة</th>
+                            <th>ملاحظات</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fuelTableBody"></tbody>
+                </table>
+                <div class="total-box">
+                    <span>إجمالي المحروقات والثلج:</span>
+                    <span id="fuelTotal">0 ريال</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. قسم الشباك ومواد الصيد -->
+        <div id="gearTab" class="tab-content">
+            <div class="card">
+                <h3>مونة العبري (تكلفة الشباك ومواد الصيد)</h3>
+                <div class="form-group">
+                    <label>اسم العدة أو الشباك أو قطع الغيار</label>
+                    <input type="text" id="gearItem" class="form-control" placeholder="مثال: شباك نايلون، سنانير، حبال...">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>التكلفة (ريال)</label>
+                        <input type="number" id="gearCost" class="form-control" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>ملاحظات</label>
+                        <input type="text" id="gearNotes" class="form-control" placeholder="ملاحظات الصيانة...">
+                    </div>
+                </div>
+                <button class="btn" onclick="addGearExpense()">إضافة تكلفة العدة</button>
+            </div>
+
+            <div class="card">
+                <h3>سجل الشباك ومواد الصيد</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>البيان</th>
+                            <th>التكلفة</th>
+                            <th>ملاحظات</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gearTableBody"></tbody>
+                </table>
+                <div class="total-box">
+                    <span>إجمالي الشباك ومواد الصيد:</span>
+                    <span id="gearTotal">0 ريال</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. قسم الصيادين -->
+        <div id="fishermenTab" class="tab-content">
+            <div class="card">
+                <h3>إضافة صياد جديد لهذا العبري</h3>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>اسم الصياد</label>
+                        <input type="text" id="fisherName" class="form-control" placeholder="الاسم الكامل">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <input type="text" id="fisherPhone" class="form-control" placeholder="رقم التواصل">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>سلف / مديونية سابقة (ريال)</label>
+                    <input type="number" id="fisherDebt" class="form-control" value="0">
+                </div>
+                <button class="btn" onclick="addFisherman()">تسجيل الصياد</button>
+            </div>
+
+            <div class="card">
+                <h3>قائمة الصيادين وحساباتهم</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>اسم الصياد</th>
+                            <th>الهاتف</th>
+                            <th>المديونية والسلف</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fishermenTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 5. قسم مبيعات الأسماك -->
+        <div id="salesTab" class="tab-content">
+            <div class="card">
+                <h3>تسجيل مبيعات الأسماك (حسابات الإيرادات)</h3>
+                <div class="form-group">
+                    <label>نوع السمك / الصنف</label>
+                    <input type="text" id="fishType" class="form-control" placeholder="مثال: ثمد، ديرك، شعور...">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>الكمية (بالكيلو / الثلاجة)</label>
+                        <input type="number" id="fishQty" class="form-control" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>إجمالي سعر البيع (ريال)</label>
+                        <input type="number" id="fishPrice" class="form-control" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>ملاحظات الحسبه / المشتري</label>
+                    <input type="text" id="fishNotes" class="form-control" placeholder="اسم الحوت أو السوق...">
+                </div>
+                <button class="btn btn-success" onclick="addFishSale()">تسجيل عملية البيع</button>
+            </div>
+
+            <div class="card">
+                <h3>سجل مبيعات الأسماك</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الصنف</th>
+                            <th>الكمية</th>
+                            <th>المبلغ الإجمالي</th>
+                            <th>ملاحظات</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesTableBody"></tbody>
+                </table>
+                <div class="total-box">
+                    <span>إجمالي مبيعات الأسماك:</span>
+                    <span id="salesTotal">0 ريال</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. التقرير الشامل وتصدير PDF وحفظ البيانات -->
+        <div id="reportTab" class="tab-content">
+            <div class="card" id="pdfReportArea">
+                <h3>📊 التقرير المالي الشامل للعبري الحالي</h3>
+                <p style="margin-bottom: 15px; color: var(--text-light); font-size: 0.85rem;">اسم العبري: <strong id="reportBoatName">---</strong></p>
+                
+                <table>
+                    <tr>
+                        <td>إجمالي مبيعات الأسماك (الإيرادات):</td>
+                        <td id="repSales" style="font-weight: bold; color: var(--success);">0 ريال</td>
+                    </tr>
+                    <tr>
+                        <td>إجمالي التموين الغذائي:</td>
+                        <td id="repFood" style="color: var(--danger);">0 ريال</td>
+                    </tr>
+                    <tr>
+                        <td>إجمالي المحروقات والثلج:</td>
+                        <td id="repFuel" style="color: var(--danger);">0 ريال</td>
+                    </tr>
+                    <tr>
+                        <td>إجمالي شباك ومواد الصيد:</td>
+                        <td id="repGear" style="color: var(--danger);">0 ريال</td>
+                    </tr>
+                    <tr style="background: #f8fafc; font-weight: bold; font-size: 1.05rem;">
+                        <td>صافي أرباح الرحلة / العبري:</td>
+                        <td id="repNet">0 ريال</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>🖨️ التصدير، المشاركة والحفظ الاحتياطي</h3>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 15px;">يمكنك تصدير كشف الحساب كملف PDF لإرساله عبر الواتساب، أو حفظ نسخة احتياطية لبياناتك لضمان عدم ضياعها.</p>
+                
+                <div class="actions-bar">
+                    <button class="btn btn-accent" onclick="exportToPDF()">📄 تصدير ومشاركة كشف PDF</button>
+                    <button class="btn btn-success" onclick="backupData()">💾 حفظ نسخة احتياطية (ملف)</button>
+                    <label class="btn" style="cursor: pointer; margin: 0;">
+                        📂 استعادة البيانات
+                        <input type="file" id="restoreFile" style="display: none;" onchange="restoreData(event)">
+                    </label>
+                </div>
             </div>
         </div>
 
     </div>
 
-    <!-- التنقل السفلي -->
-    <nav>
-        <button onclick="switchSection('home-section')" class="active" id="nav-home"><i class="fas fa-home"></i>الرئيسية</button>
-        <button onclick="switchSection('sarakeel-section')" id="nav-sarakeel"><i class="fas fa-boxes"></i>السراكل</button>
-        <button onclick="switchSection('fishermen-section')" id="nav-fishermen"><i class="fas fa-users"></i>الصيادين</button>
-        <button onclick="switchSection('settings-section')" id="nav-settings"><i class="fas fa-plus-circle"></i>إضافة</button>
-    </nav>
-
     <script>
-        // قاعدة البيانات المحلية
-        let db = JSON.parse(localStorage.getItem('ebri_db')) || {
-            sarakeel: [
-                { name: "المشتقات النفطية (ديزل/بترول)", qty: "200 لتر", status: "متوفر" },
-                { name: "المواد الغذائية (تموين العبري)", qty: "مكتملة", status: "جيد" },
-                { name: "معدات الاصتياد (شباك/خيوط)", qty: "10 قطع", status: "ممتاز" }
-            ],
-            fishermen: [
-                { id: 1, name: "أحمد محمد", phone: "777521058", withdrawals: 50000, debt: 20000 },
-                { id: 2, name: "صالح عمر", phone: "733099270", withdrawals: 30000, debt: 0 }
-            ],
-            sales: [
-                { totalSales: 2550000, expenses: 187000, netProfit: 2363000 }
+        // هيكل البيانات الأساسي لكل المراكب
+        let appData = JSON.parse(localStorage.getItem('abri_fleet_data')) || {
+            currentBoatId: 1,
+            boats: [
+                { id: 1, name: 'عبري الشاهين 1', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80', food: [], fuel: [], gear: [], fishermen: [], sales: [] }
             ]
         };
 
         function saveData() {
-            localStorage.setItem('ebri_db', JSON.stringify(db));
+            localStorage.setItem('abri_fleet_data', JSON.stringify(appData));
+        }
+
+        function getCurrentBoat() {
+            return appData.boats.find(b => b.id === appData.currentBoatId) || appData.boats[0];
+        }
+
+        // التنقل بين التبويبات
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
             renderAll();
         }
 
-        function switchSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
+        // إدارة المراكب
+        function renderBoats() {
+            const grid = document.getElementById('boatsGridContainer');
+            grid.innerHTML = '';
+            appData.boats.forEach(boat => {
+                const card = document.createElement('div');
+                card.className = `boat-card ${boat.id === appData.currentBoatId ? 'active' : ''}`;
+                card.innerHTML = `<strong>${boat.name}</strong>`;
+                card.onclick = () => {
+                    appData.currentBoatId = boat.id;
+                    saveData();
+                    renderAll();
+                };
+                grid.appendChild(card);
+            });
+
+            const current = getCurrentBoat();
+            document.getElementById('currentBoatNameInput').value = current.name;
+            document.getElementById('currentBoatImage').src = current.image;
+            document.getElementById('reportBoatName').innerText = current.name;
+        }
+
+        function addNewBoat() {
+            const name = prompt("أدخل اسم العبري الجديد:");
+            if(!name) return;
+            const newId = Date.now();
+            appData.boats.push({
+                id: newId,
+                name: name,
+                image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80',
+                food: [], fuel: [], gear: [], fishermen: [], sales: []
+            });
+            appData.currentBoatId = newId;
+            saveData();
+            renderAll();
+        }
+
+        function updateBoatName(newName) {
+            const current = getCurrentBoat();
+            current.name = newName;
+            saveData();
+            renderBoats();
+        }
+
+        // 1. التموين الغذائي
+        function addFoodExpense() {
+            const item = document.getElementById('foodItem').value;
+            const cost = parseFloat(document.getElementById('foodCost').value) || 0;
+            const notes = document.getElementById('foodNotes').value;
+            if(!item || cost <= 0) return alert('الرجاء إدخال البيان والتكلفة بشكل صحيح');
             
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            if(sectionId === 'home-section') document.getElementById('nav-home').classList.add('active');
-            if(sectionId === 'sarakeel-section') document.getElementById('nav-sarakeel').classList.add('active');
-            if(sectionId === 'fishermen-section') document.getElementById('nav-fishermen').classList.add('active');
-            if(sectionId === 'settings-section') document.getElementById('nav-settings').classList.add('active');
+            getCurrentBoat().food.push({ id: Date.now(), item, cost, notes });
+            saveData();
+            document.getElementById('foodItem').value = '';
+            document.getElementById('foodCost').value = '';
+            document.getElementById('foodNotes').value = '';
+            renderFood();
+        }
+
+        function deleteFood(id) {
+            let boat = getCurrentBoat();
+            boat.food = boat.food.filter(x => x.id !== id);
+            saveData();
+            renderFood();
+        }
+
+        function renderFood() {
+            const boat = getCurrentBoat();
+            const tbody = document.getElementById('foodTableBody');
+            tbody.innerHTML = '';
+            let total = 0;
+            boat.food.forEach(f => {
+                total += f.cost;
+                tbody.innerHTML += `<tr><td>${f.item}</td><td>${f.cost} ريال</td><td>${f.notes}</td><td><button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteFood(${f.id})">حذف</button></td></tr>`;
+            });
+            document.getElementById('foodTotal').innerText = total + ' ريال';
+        }
+
+        // 2. المحروقات والثلج
+        function addFuelExpense() {
+            const type = document.getElementById('fuelType').value;
+            const qty = parseFloat(document.getElementById('fuelQty').value) || 0;
+            const cost = parseFloat(document.getElementById('fuelCost').value) || 0;
+            const notes = document.getElementById('fuelNotes').value;
+            if(cost <= 0) return alert('الرجاء إدخال التكلفة');
+
+            getCurrentBoat().fuel.push({ id: Date.now(), type, qty, cost, notes });
+            saveData();
+            document.getElementById('fuelQty').value = '';
+            document.getElementById('fuelCost').value = '';
+            document.getElementById('fuelNotes').value = '';
+            renderFuel();
+        }
+
+        function deleteFuel(id) {
+            let boat = getCurrentBoat();
+            boat.fuel = boat.fuel.filter(x => x.id !== id);
+            saveData();
+            renderFuel();
+        }
+
+        function renderFuel() {
+            const boat = getCurrentBoat();
+            const tbody = document.getElementById('fuelTableBody');
+            tbody.innerHTML = '';
+            let total = 0;
+            boat.fuel.forEach(f => {
+                total += f.cost;
+                tbody.innerHTML += `<tr><td>${f.type}</td><td>${f.qty}</td><td>${f.cost} ريال</td><td>${f.notes}</td><td><button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteFuel(${f.id})">حذف</button></td></tr>`;
+            });
+            document.getElementById('fuelTotal').innerText = total + ' ريال';
+        }
+
+        // 3. الشباك ومواد الصيد
+        function addGearExpense() {
+            const item = document.getElementById('gearItem').value;
+            const cost = parseFloat(document.getElementById('gearCost').value) || 0;
+            const notes = document.getElementById('gearNotes').value;
+            if(!item || cost <= 0) return alert('الرجاء إدخال البيان والتكلفة');
+
+            getCurrentBoat().gear.push({ id: Date.now(), item, cost, notes });
+            saveData();
+            document.getElementById('gearItem').value = '';
+            document.getElementById('gearCost').value = '';
+            document.getElementById('gearNotes').value = '';
+            renderGear();
+        }
+
+        function deleteGear(id) {
+            let boat = getCurrentBoat();
+            boat.gear = boat.gear.filter(x => x.id !== id);
+            saveData();
+            renderGear();
+        }
+
+        function renderGear() {
+            const boat = getCurrentBoat();
+            const tbody = document.getElementById('gearTableBody');
+            tbody.innerHTML = '';
+            let total = 0;
+            boat.gear.forEach(g => {
+                total += g.cost;
+                tbody.innerHTML += `<tr><td>${g.item}</td><td>${g.cost} ريال</td><td>${g.notes}</td><td><button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteGear(${g.id})">حذف</button></td></tr>`;
+            });
+            document.getElementById('gearTotal').innerText = total + ' ريال';
+        }
+
+        // 4. الصيادين
+        function addFisherman() {
+            const name = document.getElementById('fisherName').value;
+            const phone = document.getElementById('fisherPhone').value;
+            const debt = parseFloat(document.getElementById('fisherDebt').value) || 0;
+            if(!name) return alert('أدخل اسم الصياد');
+
+            getCurrentBoat().fishermen.push({ id: Date.now(), name, phone, debt });
+            saveData();
+            document.getElementById('fisherName').value = '';
+            document.getElementById('fisherPhone').value = '';
+            document.getElementById('fisherDebt').value = '0';
+            renderFishermen();
+        }
+
+        function deleteFisherman(id) {
+            let boat = getCurrentBoat();
+            boat.fishermen = boat.fishermen.filter(x => x.id !== id);
+            saveData();
+            renderFishermen();
+        }
+
+        function renderFishermen() {
+            const boat = getCurrentBoat();
+            const tbody = document.getElementById('fishermenTableBody');
+            tbody.innerHTML = '';
+            boat.fishermen.forEach(f => {
+                tbody.innerHTML += `<tr><td>${f.name}</td><td>${f.phone || '---'}</td><td>${f.debt} ريال</td><td><button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteFisherman(${f.id})">حذف</button></td></tr>`;
+            });
+        }
+
+        // 5. مبيعات الأسماك
+        function addFishSale() {
+            const type = document.getElementById('fishType').value;
+            const qty = parseFloat(document.getElementById('fishQty').value) || 0;
+            const price = parseFloat(document.getElementById('fishPrice').value) || 0;
+            const notes = document.getElementById('fishNotes').value;
+            if(!type || price <= 0) return alert('أدخل الصنف وسعر البيع');
+
+            getCurrentBoat().sales.push({ id: Date.now(), type, qty, price, notes });
+            saveData();
+            document.getElementById('fishType').value = '';
+            document.getElementById('fishQty').value = '';
+            document.getElementById('fishPrice').value = '';
+            document.getElementById('fishNotes').value = '';
+            renderSales();
+        }
+
+        function deleteSale(id) {
+            let boat = getCurrentBoat();
+            boat.sales = boat.sales.filter(x => x.id !== id);
+            saveData();
+            renderSales();
+        }
+
+        function renderSales() {
+            const boat = getCurrentBoat();
+            const tbody = document.getElementById('salesTableBody');
+            tbody.innerHTML = '';
+            let total = 0;
+            boat.sales.forEach(s => {
+                total += s.price;
+                tbody.innerHTML += `<tr><td>${s.type}</td><td>${s.qty}</td><td>${s.price} ريال</td><td>${s.notes}</td><td><button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteSale(${s.id})">حذف</button></td></tr>`;
+            });
+            document.getElementById('salesTotal').innerText = total + ' ريال';
+        }
+
+        // التقرير الشامل
+        function renderReport() {
+            const boat = getCurrentBoat();
+            const totalSales = boat.sales.reduce((sum, i) => sum + i.price, 0);
+            const totalFood = boat.food.reduce((sum, i) => sum + i.cost, 0);
+            const totalFuel = boat.fuel.reduce((sum, i) => sum + i.cost, 0);
+            const totalGear = boat.gear.reduce((sum, i) => sum + i.cost, 0);
+            const totalExpenses = totalFood + totalFuel + totalGear;
+            const netProfit = totalSales - totalExpenses;
+
+            document.getElementById('repSales').innerText = totalSales + ' ريال';
+            document.getElementById('repFood').innerText = totalFood + ' ريال';
+            document.getElementById('repFuel').innerText = totalFuel + ' ريال';
+            document.getElementById('repGear').innerText = totalGear + ' ريال';
+            
+            const netEl = document.getElementById('repNet');
+            netEl.innerText = netProfit + ' ريال';
+            netEl.style.color = netProfit >= 0 ? 'var(--success)' : 'var(--danger)';
+        }
+
+        // تصدير PDF
+        function exportToPDF() {
+            const element = document.getElementById('pdfReportArea');
+            const opt = {
+                margin:       10,
+                filename:     `كشف_حساب_${getCurrentBoat().name}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).save();
+        }
+
+        // حفظ واستعادة البيانات (حماية من الضياع)
+        function backupData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Abri_Backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function restoreData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    appData = JSON.parse(e.target.result);
+                    saveData();
+                    renderAll();
+                    alert('تم استعادة البيانات بنجاح!');
+                } catch (err) {
+                    alert('ملف النسخ الاحتياطي غير صالح!');
+                }
+            };
+            reader.readAsText(file);
         }
 
         function renderAll() {
-            // رندرة السراكل
-            let sHtml = "<table><tr><th>النفط / الغذاء / المعدات</th><th>الكمية المتبقية</th><th>الحالة</th></tr>";
-            db.sarakeel.forEach(s => {
-                sHtml += `<tr><td>${s.name}</td><td><b>${s.qty}</b></td><td><span class="badge">${s.status}</span></td></tr>`;
-            });
-            sHtml += "</table>";
-            document.getElementById('sarakeel-list').innerHTML = sHtml;
-
-            // رندرة الصيادين
-            let fHtml = "";
-            let totalDebts = 0;
-            db.fishermen.forEach(f => {
-                totalDebts += Number(f.debt);
-                fHtml += `
-                <div style="background:#f9f9f9; padding:10px; border-radius:6px; margin-bottom:8px; border-right:4px solid var(--accent);">
-                    <strong>${f.name}</strong> (جوال: ${f.phone})<br>
-                    <small>إجمالي السحبيات: ${f.withdrawals} ر.ي | المديونية: <span style="color:var(--danger); font-weight:bold;">${f.debt} ر.ي</span></small>
-                </div>`;
-            });
-            document.getElementById('fishermen-list').innerHTML = fHtml;
-
-            // رندرة المبيعات والأرباح
-            let totalSalesSum = 0;
-            let totalExpensesSum = 0;
-            let totalProfitSum = 0;
-            db.sales.forEach(sl => {
-                totalSalesSum += Number(sl.totalSales);
-                totalExpensesSum += Number(sl.expenses);
-                totalProfitSum += Number(sl.netProfit);
-            });
-
-            document.getElementById('summary-sales').innerText = totalSalesSum + " ر.ي";
-            document.getElementById('summary-debts').innerText = totalDebts + " ر.ي";
-            document.getElementById('summary-profits').innerText = totalProfitSum + " ر.ي";
-
-            document.getElementById('sales-details').innerHTML = `
-                <p>إجمالي بيع السمك: <b>${totalSalesSum} ريال</b></p>
-                <p>إجمالي المصاريف (سراكل/وقود): <b>${totalExpensesSum} ريال</b></p>
-                <hr style="margin:10px 0;">
-                <p style="font-size:1rem; color:var(--success);"><b>صافي الأرباح: ${totalProfitSum} ريال</b></p>
-            `;
+            renderBoats();
+            renderFood();
+            renderFuel();
+            renderGear();
+            renderFishermen();
+            renderSales();
+            renderReport();
         }
 
-        function addFisherman() {
-            let name = document.getElementById('new-f-name').value;
-            let phone = document.getElementById('new-f-phone').value;
-            let debt = document.getElementById('new-f-debt').value || 0;
-
-            if(!name) { alert('يرجى كتابة اسم الصياد'); return; }
-
-            db.fishermen.push({ id: Date.now(), name, phone, withdrawals: 0, debt: Number(debt) });
-            saveData();
-            alert('تم إضافة الصياد بنجاح!');
-            document.getElementById('new-f-name').value = '';
-            document.getElementById('new-f-phone').value = '';
-            document.getElementById('new-f-debt').value = '';
-            switchSection('fishermen-section');
-        }
-
-        function addSaleRecord() {
-            let sales = Number(document.getElementById('new-sale-amount').value);
-            let expenses = Number(document.getElementById('new-sale-expenses').value);
-
-            if(!sales) { alert('يرجى إدخال قيمة مبيعات السمك'); return; }
-
-            let netProfit = sales - expenses;
-            db.sales.push({ totalSales: sales, expenses: expenses, netProfit: netProfit });
-            saveData();
-            alert('تم حفظ كشف المبيعات والأرباح بنجاح!');
-            document.getElementById('new-sale-amount').value = '';
-            document.getElementById('new-sale-expenses').value = '';
-            switchSection('home-section');
-        }
-
-        function filterFishermen() {
-            let query = document.getElementById('search-fisherman').value.toLowerCase();
-            let filtered = db.fishermen.filter(f => f.name.toLowerCase().includes(query) || f.phone.includes(query));
-            let fHtml = "";
-            filtered.forEach(f => {
-                fHtml += `
-                <div style="background:#f9f9f9; padding:10px; border-radius:6px; margin-bottom:8px; border-right:4px solid var(--accent);">
-                    <strong>${f.name}</strong> (جوال: ${f.phone})<br>
-                    <small>إجمالي السحبيات: ${f.withdrawals} ر.ي | المديونية: <span style="color:var(--danger); font-weight:bold;">${f.debt} ر.ي</span></small>
-                </div>`;
-            });
-            document.getElementById('fishermen-list').innerHTML = fHtml;
-        }
-
-        renderAll();
+        window.onload = renderAll;
     </script>
 </body>
 </html>
