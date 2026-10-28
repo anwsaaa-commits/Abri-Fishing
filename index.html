@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق حسابات مركب الصيد - العبري</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0a192f;
+            --secondary: #172a45;
+            --accent: #d4af37;
+            --text-light: #e6f1ff;
+            --text-main: #333333;
+            --bg-body: #f4f7f6;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 70px; }
+        header { background-color: var(--primary); color: var(--accent); padding: 15px; text-align: center; border-bottom: 3px solid var(--accent); }
+        header h1 { font-size: 1.3rem; margin-bottom: 5px; }
+        header p { font-size: 0.85rem; color: var(--text-light); }
+        
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        
+        /* Dashboard Cards */
+        .grid-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--primary); cursor: pointer; transition: 0.2s; }
+        .card:hover { transform: translateY(-3px); }
+        .card i { font-size: 1.8rem; color: var(--accent); margin-bottom: 8px; }
+        .card h3 { font-size: 0.95rem; color: var(--primary); }
+        .card span { font-size: 0.8rem; color: #777; }
+
+        /* Sections */
+        .section { display: none; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .section.active { display: block; }
+        .section-title { font-size: 1.1rem; color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid var(--accent); padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Forms & Inputs */
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; font-weight: 600; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; }
+        
+        .btn { background: var(--primary); color: var(--accent); border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; font-size: 0.95rem; transition: 0.2s; }
+        .btn:hover { background: var(--secondary); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: var(--success); color: white; }
+
+        /* Tables & Lists */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+        th, td { padding: 8px; text-align: right; border-bottom: 1px solid #eee; }
+        th { background-color: var(--primary); color: white; }
+
+        /* Bottom Nav */
+        nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--primary); display: flex; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--accent); z-index: 1000; }
+        nav button { background: none; border: none; color: white; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 25%; }
+        nav button i { font-size: 1.2rem; margin-bottom: 3px; color: var(--accent); }
+        nav button.active { color: var(--accent); font-weight: bold; }
+        
+        .badge { background: var(--accent); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>حسابات مركب الصيد (العبري)</h1>
+        <p>إدارة السراكل، الصيادين، والمبيعات والأرباح</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- القائمة الرئيسية -->
+        <div id="home-section" class="section active">
+            <div class="section-title">لوحة المؤشرات السريعة</div>
+            <div class="grid-cards">
+                <div class="card" onclick="switchSection('sarakeel')">
+                    <i class="fas fa-boxes"></i>
+                    <h3>سراكل العبري</h3>
+                    <span>المخزون والوقود</span>
+                </div>
+                <div class="card" onclick="switchSection('fishermen')">
+                    <i class="fas fa-users"></i>
+                    <h3>الصيادين والقروض</h3>
+                    <span>الأسماء والجوالات والديون</span>
+                </div>
+                <div class="card" onclick="switchSection('sales')">
+                    <i class="fas fa-fish"></i>
+                    <h3>مبيعات الأسماك</h3>
+                    <span>البيع والأرباح الصافية</span>
+                </div>
+                <div class="card" onclick="switchSection('settings')">
+                    <i class="fas fa-cogs"></i>
+                    <h3>إضافة وتعديل</h3>
+                    <span>التحكم الكامل بالبيانات</span>
+                </div>
+            </div>
+            
+            <div style="background: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                <h4 style="color: var(--primary); margin-bottom: 10px; font-size: 0.95rem;"><i class="fas fa-chart-line"></i> ملخص عام للمشروع</h4>
+                <p style="font-size: 0.85rem; margin-bottom: 5px;">إجمالي المبيعات: <span id="summary-sales" class="badge">0 ريال</span></p>
+                <p style="font-size: 0.85rem; margin-bottom: 5px;">إجمالي المديونيات على الصيادين: <span id="summary-debts" class="badge" style="background: var(--danger); color: white;">0 ريال</span></p>
+                <p style="font-size: 0.85rem;">صافي الأرباح: <span id="summary-profits" class="badge" style="background: var(--success); color: white;">0 ريال</span></p>
+            </div>
+        </div>
+
+        <!-- 1. قسم سراكل العبري -->
+        <div id="sarakeel-section" class="section">
+            <div class="section-title">سراكل العبري (المخزون والمستلزمات)</div>
+            <div id="sarakeel-list"></div>
+        </div>
+
+        <!-- 2. قسم الصيادين -->
+        <div id="fishermen-section" class="section">
+            <div class="section-title">كشوفات الصيادين والسحبيات والديون</div>
+            <div class="form-group">
+                <input type="text" id="search-fisherman" placeholder="ابحث باسم الصياد..." onkeyup="filterFishermen()">
+            </div>
+            <div id="fishermen-list"></div>
+        </div>
+
+        <!-- 3. قسم المبيعات والأرباح -->
+        <div id="sales-section" class="section">
+            <div class="section-title">إجمالي بيع السمك والأرباح</div>
+            <div id="sales-details"></div>
+        </div>
+
+        <!-- 4. قسم الإضافة والتحكم -->
+        <div id="settings-section" class="section">
+            <div class="section-title">إضافة بيانات جديدة (تحكم كامل)</div>
+            
+            <div style="margin-bottom: 20px;">
+                <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--primary);">إضافة صياد جديد</h4>
+                <div class="form-group"><input type="text" id="new-f-name" placeholder="اسم الصياد"></div>
+                <div class="form-group"><input type="text" id="new-f-phone" placeholder="رقم الجوال"></div>
+                <div class="form-group"><input type="number" id="new-f-debt" placeholder="المديونية الابتدائية (إن وجدت)"></div>
+                <button class="btn" onclick="addFisherman()">حفظ الصياد</button>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+
+            <div>
+                <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--primary);">تسجيل عملية بيع سمك جديدة</h4>
+                <div class="form-group"><input type="number" id="new-sale-amount" placeholder="إجمالي قيمة بيع السمك"></div>
+                <div class="form-group"><input type="number" id="new-sale-expenses" placeholder="المصاريف (سراكل/وقود/نثرية)"></div>
+                <button class="btn btn-success" onclick="addSaleRecord()">حساب وحفظ الأرباح</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- التنقل السفلي -->
+    <nav>
+        <button onclick="switchSection('home-section')" class="active" id="nav-home"><i class="fas fa-home"></i>الرئيسية</button>
+        <button onclick="switchSection('sarakeel-section')" id="nav-sarakeel"><i class="fas fa-boxes"></i>السراكل</button>
+        <button onclick="switchSection('fishermen-section')" id="nav-fishermen"><i class="fas fa-users"></i>الصيادين</button>
+        <button onclick="switchSection('settings-section')" id="nav-settings"><i class="fas fa-plus-circle"></i>إضافة</button>
+    </nav>
+
+    <script>
+        // قاعدة البيانات المحلية
+        let db = JSON.parse(localStorage.getItem('ebri_db')) || {
+            sarakeel: [
+                { name: "المشتقات النفطية (ديزل/بترول)", qty: "200 لتر", status: "متوفر" },
+                { name: "المواد الغذائية (تموين العبري)", qty: "مكتملة", status: "جيد" },
+                { name: "معدات الاصتياد (شباك/خيوط)", qty: "10 قطع", status: "ممتاز" }
+            ],
+            fishermen: [
+                { id: 1, name: "أحمد محمد", phone: "777521058", withdrawals: 50000, debt: 20000 },
+                { id: 2, name: "صالح عمر", phone: "733099270", withdrawals: 30000, debt: 0 }
+            ],
+            sales: [
+                { totalSales: 2550000, expenses: 187000, netProfit: 2363000 }
+            ]
+        };
+
+        function saveData() {
+            localStorage.setItem('ebri_db', JSON.stringify(db));
+            renderAll();
+        }
+
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            if(sectionId === 'home-section') document.getElementById('nav-home').classList.add('active');
+            if(sectionId === 'sarakeel-section') document.getElementById('nav-sarakeel').classList.add('active');
+            if(sectionId === 'fishermen-section') document.getElementById('nav-fishermen').classList.add('active');
+            if(sectionId === 'settings-section') document.getElementById('nav-settings').classList.add('active');
+        }
+
+        function renderAll() {
+            // رندرة السراكل
+            let sHtml = "<table><tr><th>النفط / الغذاء / المعدات</th><th>الكمية المتبقية</th><th>الحالة</th></tr>";
+            db.sarakeel.forEach(s => {
+                sHtml += `<tr><td>${s.name}</td><td><b>${s.qty}</b></td><td><span class="badge">${s.status}</span></td></tr>`;
+            });
+            sHtml += "</table>";
+            document.getElementById('sarakeel-list').innerHTML = sHtml;
+
+            // رندرة الصيادين
+            let fHtml = "";
+            let totalDebts = 0;
+            db.fishermen.forEach(f => {
+                totalDebts += Number(f.debt);
+                fHtml += `
+                <div style="background:#f9f9f9; padding:10px; border-radius:6px; margin-bottom:8px; border-right:4px solid var(--accent);">
+                    <strong>${f.name}</strong> (جوال: ${f.phone})<br>
+                    <small>إجمالي السحبيات: ${f.withdrawals} ر.ي | المديونية: <span style="color:var(--danger); font-weight:bold;">${f.debt} ر.ي</span></small>
+                </div>`;
+            });
+            document.getElementById('fishermen-list').innerHTML = fHtml;
+
+            // رندرة المبيعات والأرباح
+            let totalSalesSum = 0;
+            let totalExpensesSum = 0;
+            let totalProfitSum = 0;
+            db.sales.forEach(sl => {
+                totalSalesSum += Number(sl.totalSales);
+                totalExpensesSum += Number(sl.expenses);
+                totalProfitSum += Number(sl.netProfit);
+            });
+
+            document.getElementById('summary-sales').innerText = totalSalesSum + " ر.ي";
+            document.getElementById('summary-debts').innerText = totalDebts + " ر.ي";
+            document.getElementById('summary-profits').innerText = totalProfitSum + " ر.ي";
+
+            document.getElementById('sales-details').innerHTML = `
+                <p>إجمالي بيع السمك: <b>${totalSalesSum} ريال</b></p>
+                <p>إجمالي المصاريف (سراكل/وقود): <b>${totalExpensesSum} ريال</b></p>
+                <hr style="margin:10px 0;">
+                <p style="font-size:1rem; color:var(--success);"><b>صافي الأرباح: ${totalProfitSum} ريال</b></p>
+            `;
+        }
+
+        function addFisherman() {
+            let name = document.getElementById('new-f-name').value;
+            let phone = document.getElementById('new-f-phone').value;
+            let debt = document.getElementById('new-f-debt').value || 0;
+
+            if(!name) { alert('يرجى كتابة اسم الصياد'); return; }
+
+            db.fishermen.push({ id: Date.now(), name, phone, withdrawals: 0, debt: Number(debt) });
+            saveData();
+            alert('تم إضافة الصياد بنجاح!');
+            document.getElementById('new-f-name').value = '';
+            document.getElementById('new-f-phone').value = '';
+            document.getElementById('new-f-debt').value = '';
+            switchSection('fishermen-section');
+        }
+
+        function addSaleRecord() {
+            let sales = Number(document.getElementById('new-sale-amount').value);
+            let expenses = Number(document.getElementById('new-sale-expenses').value);
+
+            if(!sales) { alert('يرجى إدخال قيمة مبيعات السمك'); return; }
+
+            let netProfit = sales - expenses;
+            db.sales.push({ totalSales: sales, expenses: expenses, netProfit: netProfit });
+            saveData();
+            alert('تم حفظ كشف المبيعات والأرباح بنجاح!');
+            document.getElementById('new-sale-amount').value = '';
+            document.getElementById('new-sale-expenses').value = '';
+            switchSection('home-section');
+        }
+
+        function filterFishermen() {
+            let query = document.getElementById('search-fisherman').value.toLowerCase();
+            let filtered = db.fishermen.filter(f => f.name.toLowerCase().includes(query) || f.phone.includes(query));
+            let fHtml = "";
+            filtered.forEach(f => {
+                fHtml += `
+                <div style="background:#f9f9f9; padding:10px; border-radius:6px; margin-bottom:8px; border-right:4px solid var(--accent);">
+                    <strong>${f.name}</strong> (جوال: ${f.phone})<br>
+                    <small>إجمالي السحبيات: ${f.withdrawals} ر.ي | المديونية: <span style="color:var(--danger); font-weight:bold;">${f.debt} ر.ي</span></small>
+                </div>`;
+            });
+            document.getElementById('fishermen-list').innerHTML = fHtml;
+        }
+
+        renderAll();
+    </script>
+</body>
+</html>
