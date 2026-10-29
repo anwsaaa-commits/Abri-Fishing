@@ -22,7 +22,6 @@
             --radius-md: 12px;
         }
 
-        /* تنسيق الوضع النهاري */
         [data-theme="light"] {
             --bg-dark: #f1f5f9;
             --card-dark: #ffffff;
@@ -110,13 +109,8 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
+        .page { display: none; }
+        .page.active { display: block; }
 
         .boat-selector-card {
             background: var(--card-dark);
@@ -124,7 +118,7 @@
             padding: 18px;
             margin-bottom: 20px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
         .boat-title-box {
@@ -180,7 +174,6 @@
             color: white;
         }
 
-        /* قائمة الأزرار الرئيسية */
         .main-menu-grid {
             display: flex;
             flex-direction: column;
@@ -200,9 +193,7 @@
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
         }
 
-        .menu-btn:active {
-            transform: scale(0.98);
-        }
+        .menu-btn:active { transform: scale(0.98); }
 
         .menu-btn-content {
             display: flex;
@@ -222,15 +213,8 @@
             font-size: 1.4rem;
         }
 
-        .menu-btn-text h3 {
-            font-size: 1.05rem;
-            margin-bottom: 2px;
-        }
-
-        .menu-btn-text p {
-            font-size: 0.8rem;
-            color: var(--text-sub);
-        }
+        .menu-btn-text h3 { font-size: 1.05rem; margin-bottom: 2px; }
+        .menu-btn-text p { font-size: 0.8rem; color: var(--text-sub); }
 
         .form-card {
             background: var(--card-dark);
@@ -248,18 +232,9 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 0.9rem;
-            color: var(--text-sub);
-            font-weight: 600;
-        }
-
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: var(--text-sub); font-weight: 600; }
+        
         .form-control {
             width: 100%;
             padding: 14px;
@@ -292,23 +267,9 @@
             overflow-x: auto;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
-        th, td {
-            padding: 12px 8px;
-            text-align: right;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-main);
-        }
-
-        th {
-            color: var(--text-sub);
-            background: var(--bg-dark);
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { padding: 12px 8px; text-align: right; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+        th { color: var(--text-sub); background: var(--bg-dark); }
 
         .total-box {
             background: var(--bg-dark);
@@ -424,7 +385,7 @@
                         <div class="menu-btn-icon" style="color: var(--accent); background: rgba(245, 158, 11, 0.15);">📊</div>
                         <div class="menu-btn-text">
                             <h3 style="color: var(--accent);">التقرير الشامل و PDF</h3>
-                            <p>صافي الأرباح والتصدير والحفظ الاحتياطي</p>
+                            <p>إجمالي السراكيل والأرباح والتصدير</p>
                         </div>
                     </div>
                     <span>←</span>
@@ -540,13 +501,17 @@
         <div id="page-report" class="page">
             <button class="btn-back" onclick="openPage('page-home')">← العودة للرئيسية</button>
             <div class="form-card" id="pdfReportArea">
-                <h2>📊 الحساب المالي الشامل</h2>
+                <h2>📊 التقرير المالي الشامل</h2>
                 <p style="color: var(--text-sub); margin-bottom: 12px; font-size: 0.9rem;">العبري الحالي: <strong id="reportBoatName">---</strong></p>
                 <table>
-                    <tr><td>إجمالي المبيعات:</td><td id="repSales" style="color: var(--success); font-weight: bold;">0 ريال</td></tr>
-                    <tr><td>التموين الغذائي:</td><td id="repFood" style="color: var(--danger);">0 ريال</td></tr>
-                    <tr><td>المحروقات والثلج:</td><td id="repFuel" style="color: var(--danger);">0 ريال</td></tr>
-                    <tr><td>المعدات والشباك:</td><td id="repGear" style="color: var(--danger);">0 ريال</td></tr>
+                    <tr><td>إجمالي مبيعات الأسماك:</td><td id="repSales" style="color: var(--success); font-weight: bold;">0 ريال</td></tr>
+                    <tr><td>التموين الغذائي:</td><td id="repFood">0 ريال</td></tr>
+                    <tr><td>المحروقات والثلج:</td><td id="repFuel">0 ريال</td></tr>
+                    <tr><td>الشباك ومواد الصيد:</td><td id="repGear">0 ريال</td></tr>
+                    <tr style="border-top: 2px solid var(--primary); font-weight: bold;">
+                        <td>إجمالي السراكيل (المصاريف):</td>
+                        <td id="repTotalExpenses" style="color: var(--danger);">0 ريال</td>
+                    </tr>
                 </table>
                 <div class="total-box" style="margin-top: 15px;"><span>صافي الأرباح:</span><span id="repNet">0 ريال</span></div>
             </div>
@@ -648,7 +613,6 @@
             if(!newName) return;
             getCurrentBoat().name = newName;
             saveData();
-            // تحديث اسم العبري في الأزرار مباشرة دون فقدان التركيز
             const activeBtn = document.querySelector('.boat-btn.active');
             if(activeBtn) activeBtn.innerText = newName;
             document.getElementById('reportBoatName').innerText = newName;
@@ -830,12 +794,16 @@
             const totalFood = boat.food.reduce((sum, i) => sum + i.cost, 0);
             const totalFuel = boat.fuel.reduce((sum, i) => sum + i.cost, 0);
             const totalGear = boat.gear.reduce((sum, i) => sum + i.cost, 0);
-            const netProfit = totalSales - (totalFood + totalFuel + totalGear);
+            
+            // إجمالي السراكيل (جميع المصاريف معاً)
+            const totalExpenses = totalFood + totalFuel + totalGear;
+            const netProfit = totalSales - totalExpenses;
 
             document.getElementById('repSales').innerText = totalSales + ' ريال';
             document.getElementById('repFood').innerText = totalFood + ' ريال';
             document.getElementById('repFuel').innerText = totalFuel + ' ريال';
             document.getElementById('repGear').innerText = totalGear + ' ريال';
+            document.getElementById('repTotalExpenses').innerText = totalExpenses + ' ريال';
             
             const netEl = document.getElementById('repNet');
             netEl.innerText = netProfit + ' ريال';
